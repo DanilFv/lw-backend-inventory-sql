@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mysqlDb from './mysqlDb';
 import productsRouter from './routes/products';
+import categoriesRouter from './routes/categories';
 
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/products', productsRouter);
+app.use('/categories', categoriesRouter);
 
 app.get('/test', (req, res) => {
     res.send('Test works');
