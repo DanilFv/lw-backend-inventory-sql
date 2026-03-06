@@ -1,6 +1,6 @@
 import express, {NextFunction, Request, Response} from 'express';
 import mysqlDb from '../mysqlDb';
-import {Categories, CategoryWithoutId} from '../types';
+import {Categories, CategoryWithoutId, Product} from '../types';
 import {ResultSetHeader} from 'mysql2';
 
 const categoriesRouter = express.Router();
@@ -8,7 +8,7 @@ const categoriesRouter = express.Router();
 categoriesRouter.get('/', async (req: Request, res: Response) => {
     const connection = mysqlDb.getConnection();
 
-    const [result] = await connection.query<Categories[]>('SELECT * FROM categories');
+    const [result] = await connection.query<Categories[]>('SELECT id, title FROM categories');
     res.send(result);
 });
 
@@ -29,11 +29,20 @@ categoriesRouter.delete('/:id', async (req: Request, res: Response, next: NextFu
    const connection = mysqlDb.getConnection();
 
    try {
+       const [products] = await connection.query<Product[]>(
+            'SELECT id FROM products WHERE category_id = ?',
+            [id]
+        );
+
+       if (products.length > 0) {
+           return res.status(200).send({error: 'You cannot delete a category that contains products'});
+       }
+
        const [result] = await connection.query<ResultSetHeader>('DELETE FROM categories WHERE id = ?', [id]);
 
        if (result.affectedRows === 0) {
-           return res.status(404).send( 'Category not found');
-       }
+            return res.status(404).send('Category not found');
+        }
 
         res.send({message: 'Category deleted successfully'});
 
@@ -71,7 +80,7 @@ categoriesRouter.post('/', async (req: Request, res: Response, next: NextFunctio
 
 categoriesRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     if (!req.body.title || !req.body.description) {
-        return res.status(400).send({error: 'Title is required'});
+        return res.status(400).send({error: 'Title and description are required'});
     }
 
     const id = req.params.id as string;
