@@ -56,7 +56,7 @@ CREATE TABLE `locations` (
   `title` varchar(255) NOT NULL,
   `description` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,6 +65,7 @@ CREATE TABLE `locations` (
 
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
+INSERT INTO `locations` VALUES (1,'Офис №1','Основной опенспейс на 4-м этаже'),(2,'Кабинет директора','Помещение 405, северное крыло'),(3,'Отдел разработки','Зонадля разработчиков на 3-м этаже');
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,13 +81,15 @@ CREATE TABLE `products` (
   `category_id` int NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text,
-  `price` decimal(12,0) NOT NULL,
   `image` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `location_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `products_categories_id_fk` (`category_id`),
-  CONSTRAINT `products_categories_id_fk` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `products_lcoation_id_fk` (`location_id`),
+  CONSTRAINT `products_categories_id_fk` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  CONSTRAINT `products_lcoation_id_fk` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +98,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (2,1,'Телевизор',NULL,20,NULL,'2026-03-04 21:36:07');
+INSERT INTO `products` VALUES (4,1,'Ноутбук MacBook','Мощный ноутбук M3','images/cd727207-64f0-4113-8afe-4db763410ad5.jpg','2026-03-06 23:18:03',1);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -108,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-06 21:31:25
+-- Dump completed on 2026-03-07  0:25:46
